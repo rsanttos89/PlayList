@@ -89,8 +89,8 @@ const App: React.FC = () => {
     if (currentIndex !== null && currentIndex < audioFiles.length - 1) {
       playSound(currentIndex + 1);
     } else {
-      setIsPlaying(false);
-      setCurrentIndex(null);
+      // Parar a reprodução se for o último áudio
+      stopSound();
     }
   };
 
