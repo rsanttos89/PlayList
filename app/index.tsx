@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 
@@ -33,6 +33,8 @@ const App: React.FC = () => {
       staysActiveInBackground: true,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
+      // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+      // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       allowsRecordingIOS: false,
     });
 
@@ -52,17 +54,11 @@ const App: React.FC = () => {
       { uri: audioFiles[index].uri },
       { shouldPlay: true }
     );
-
     newSound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded) {
         setIsPlaying(status.isPlaying);
-
-        if (status.didJustFinish) {
-          playNext();
-        }
       }
     });
-
     setSound(newSound);
     setCurrentIndex(index);
   };
@@ -85,16 +81,13 @@ const App: React.FC = () => {
     }
   };
 
-  const playNext = async () => {
+  const playNext = () => {
     if (currentIndex !== null && currentIndex < audioFiles.length - 1) {
       playSound(currentIndex + 1);
-    } else {
-      // Parar a reprodução se for o último áudio
-      stopSound();
     }
   };
 
-  const playPrevious = async () => {
+  const playPrevious = () => {
     if (currentIndex !== null && currentIndex > 0) {
       playSound(currentIndex - 1);
     }
