@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
+import Slider from '@react-native-community/slider';
 
 interface AudioFile {
   id: string;
@@ -14,6 +15,8 @@ const App: React.FC = () => {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [position, setPosition] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -57,6 +60,8 @@ const App: React.FC = () => {
     newSound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded) {
         setIsPlaying(status.isPlaying);
+        setDuration(status.durationMillis || 0);
+        setPosition(status.positionMillis || 0);
       }
     });
     setSound(newSound);
@@ -78,6 +83,7 @@ const App: React.FC = () => {
       await sound.stopAsync();
       setIsPlaying(false);
       setCurrentIndex(null);
+      setPosition(0);
     }
   };
 
@@ -90,6 +96,12 @@ const App: React.FC = () => {
   const playPrevious = () => {
     if (currentIndex !== null && currentIndex > 0) {
       playSound(currentIndex - 1);
+    }
+  };
+
+  const onSliderValueChange = async (value: number) => {
+    if (sound) {
+      await sound.setPositionAsync(value);
     }
   };
 
@@ -108,6 +120,18 @@ const App: React.FC = () => {
           </TouchableOpacity>
         )}
       />
+      {currentIndex !== null && (
+        <View style={styles.progressContainer}>
+          <Slider
+            value={position}
+            minimumValue={0}
+            maximumValue={duration}
+            onSlidingComplete={onSliderValueChange}
+            style={styles.slider}
+          />
+          <Text>{`${Math.floor(position / 1000)} / ${Math.floor(duration / 1000)} sec`}</Text>
+        </View>
+      )}
       <View style={styles.controls}>
         <Button title="Anterior" onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0} />
         <Button title={isPlaying ? "Pausar" : "Play"} onPress={togglePlayPause} disabled={currentIndex === null} />
@@ -135,11 +159,18 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     width: '100%',
   },
+  progressContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  slider: {
+    width: '90%',
+  },
   controls: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: 20,
   },
 });
 
