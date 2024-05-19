@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
-import * as TaskManager from 'expo-task-manager';
-import * as Notifications from 'expo-notifications';
 
 interface AudioFile {
   id: string;
   uri: string;
   filename: string;
 }
-
-const BACKGROUND_AUDIO_TASK = 'BACKGROUND_AUDIO_TASK';
 
 const App: React.FC = () => {
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
@@ -37,14 +33,7 @@ const App: React.FC = () => {
       staysActiveInBackground: true,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
-      // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_PAUSE,
-      // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       allowsRecordingIOS: false,
-    });
-
-    // Configuração de tarefas em segundo plano
-    TaskManager.defineTask(BACKGROUND_AUDIO_TASK, () => {
-      // Implementação da tarefa em segundo plano
     });
 
     return () => {
@@ -63,11 +52,17 @@ const App: React.FC = () => {
       { uri: audioFiles[index].uri },
       { shouldPlay: true }
     );
+
     newSound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded) {
         setIsPlaying(status.isPlaying);
+
+        if (status.didJustFinish) {
+          playNext();
+        }
       }
     });
+
     setSound(newSound);
     setCurrentIndex(index);
   };
@@ -90,13 +85,16 @@ const App: React.FC = () => {
     }
   };
 
-  const playNext = () => {
+  const playNext = async () => {
     if (currentIndex !== null && currentIndex < audioFiles.length - 1) {
       playSound(currentIndex + 1);
+    } else {
+      setIsPlaying(false);
+      setCurrentIndex(null);
     }
   };
 
-  const playPrevious = () => {
+  const playPrevious = async () => {
     if (currentIndex !== null && currentIndex > 0) {
       playSound(currentIndex - 1);
     }
