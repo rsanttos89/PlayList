@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
+import * as TaskManager from 'expo-task-manager';
+import * as Notifications from 'expo-notifications';
 
 interface AudioFile {
   id: string;
   uri: string;
   filename: string;
 }
+
+const BACKGROUND_AUDIO_TASK = 'BACKGROUND_AUDIO_TASK';
 
 const App: React.FC = () => {
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
@@ -27,6 +31,27 @@ const App: React.FC = () => {
         alert('Permission to access media library is required!');
       }
     })();
+
+    // Configurações para áudio em segundo plano
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+      // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_PAUSE,
+      // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      allowsRecordingIOS: false,
+    });
+
+    // Configuração de tarefas em segundo plano
+    TaskManager.defineTask(BACKGROUND_AUDIO_TASK, () => {
+      // Implementação da tarefa em segundo plano
+    });
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
   }, []);
 
   const playSound = async (index: number) => {
