@@ -21,25 +21,28 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadAudioFiles = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-
+  
       if (status === 'granted') {
         const audioAssets = await MediaLibrary.getAssetsAsync({
           mediaType: MediaLibrary.MediaType.audio,
         });
-
+  
         // Filtrar apenas arquivos .mp3
         const mp3AudioFiles = audioAssets.assets.filter((asset: any) => {
           return asset.filename.endsWith('.mp3');
         });
-
+  
+        // Ordenar os arquivos de áudio em ordem alfabética pelo nome do arquivo
+        mp3AudioFiles.sort((a, b) => a.filename.localeCompare(b.filename));
+  
         setAudioFiles(mp3AudioFiles as AudioFile[]);
       } else {
         alert('Permission to access media library is required!');
       }
     };
-
+  
     loadAudioFiles();
-
+  
     // Configurações para áudio em segundo plano
     Audio.setAudioModeAsync({
       staysActiveInBackground: true,
@@ -47,14 +50,14 @@ const App: React.FC = () => {
       playThroughEarpieceAndroid: false,
       allowsRecordingIOS: false,
     });
-
+  
     return () => {
       if (sound) {
         sound.unloadAsync();
       }
     };
   }, []);
-
+  
   const playSound = async (index: number) => {
     if (sound) {
       await sound.unloadAsync();
