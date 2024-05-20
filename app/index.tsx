@@ -136,13 +136,19 @@ const App: React.FC = () => {
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={styles.item}
-            onPress={() => playSound(index)}
+            onPress={() => {
+              if (currentIndex === index && isPlaying) {
+                togglePlayPause(); // Pausar o áudio se estiver tocando e o usuário pressionar o item atual
+              } else {
+                playSound(index); // Caso contrário, reproduzir o áudio do item pressionado
+              }
+            }}
           >
             <View style={styles.boxMusic}>
               {currentIndex === index && isPlaying ? (
-                <FontAwesome5 name="play" size={24} color="black" />
+                <FontAwesome5 name="pause" size={24} color="black" />
               ) : (
-                <FontAwesome5 name="music" size={24} color="black" />
+                <FontAwesome5 name="play" size={24} color="black" />
               )}
             </View>
             <Text>{item.filename}</Text>
