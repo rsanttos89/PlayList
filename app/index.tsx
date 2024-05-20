@@ -25,7 +25,13 @@ const App: React.FC = () => {
         const audioAssets = await MediaLibrary.getAssetsAsync({
           mediaType: MediaLibrary.MediaType.audio,
         });
-        setAudioFiles(audioAssets.assets as AudioFile[]);
+
+        // Filtrar apenas arquivos .mp3
+        const mp3AudioFiles = audioAssets.assets.filter((asset: any) => {
+          return asset.filename.endsWith('.mp3');
+        });
+
+        setAudioFiles(mp3AudioFiles as AudioFile[]);
       } else {
         alert('Permission to access media library is required!');
       }
@@ -36,8 +42,6 @@ const App: React.FC = () => {
       staysActiveInBackground: true,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
-      // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
-      // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       allowsRecordingIOS: false,
     });
 
