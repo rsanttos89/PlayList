@@ -19,8 +19,9 @@ const App: React.FC = () => {
   const [duration, setDuration] = useState<number>(0);
 
   useEffect(() => {
-    (async () => {
+    const loadAudioFiles = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
+
       if (status === 'granted') {
         const audioAssets = await MediaLibrary.getAssetsAsync({
           mediaType: MediaLibrary.MediaType.audio,
@@ -35,7 +36,9 @@ const App: React.FC = () => {
       } else {
         alert('Permission to access media library is required!');
       }
-    })();
+    };
+
+    loadAudioFiles();
 
     // Configurações para áudio em segundo plano
     Audio.setAudioModeAsync({
@@ -109,6 +112,12 @@ const App: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (position === duration) {
+      playNext();
+    }
+  }, [position]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de Áudios</Text>
@@ -122,6 +131,10 @@ const App: React.FC = () => {
           >
             <Text>{item.filename}</Text>
           </TouchableOpacity>
+        )}
+        initialNumToRender={5} // Renderiza apenas os 5 primeiros itens inicialmente
+        getItemLayout={(data, index) => (
+          { length: 50, offset: 50 * index, index } // Tamanho estimado de cada item
         )}
       />
       {currentIndex !== null && (
