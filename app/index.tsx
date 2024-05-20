@@ -159,18 +159,18 @@ const App: React.FC = () => {
           { length: 50, offset: 50 * index, index } // Tamanho estimado de cada item
         )}
       />
-      {currentIndex !== null && (
-        <View style={styles.progressContainer}>
-          <Slider
-            value={position}
-            minimumValue={0}
-            maximumValue={duration}
-            onSlidingComplete={onSliderValueChange}
-            style={styles.slider}
-          />
-          <Text>{`${Math.floor(position / 1000)} / ${Math.floor(duration / 1000)} sec`}</Text>
-        </View>
-      )}
+
+      <View style={styles.progressContainer}>
+        <Slider
+          value={position}
+          minimumValue={0}
+          maximumValue={duration}
+          onSlidingComplete={onSliderValueChange}
+          style={styles.slider}
+        />
+        <Text>{`${Math.floor(position / 1000)} / ${Math.floor(duration / 1000)} sec`}</Text>
+      </View>
+      
       <View style={styles.controls}>
         <Button title="Anterior" onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0} />
         <Button title={isPlaying ? "Pausar" : "Play"} onPress={togglePlayPause} disabled={currentIndex === null} />
