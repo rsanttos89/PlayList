@@ -4,7 +4,7 @@ import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } 
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, AntDesign } from '@expo/vector-icons';
 
 interface AudioFile {
   id: string;
@@ -91,6 +91,16 @@ const App: React.FC = () => {
     }
   };
 
+  const togglePlayStop = async () => {
+    if (sound) {
+      if (isPlaying) {
+        await sound.stopAsync();
+      } else {
+        await sound.playAsync();
+      }
+    }
+  };
+
   const stopSound = async () => {
     if (sound) {
       await sound.stopAsync();
@@ -146,12 +156,12 @@ const App: React.FC = () => {
           >
             <View style={styles.boxMusic}>
               {currentIndex === index && isPlaying ? (
-                <FontAwesome5 name="pause" size={24} color="black" />
+                <FontAwesome5 name="pause" size={18} color="#00000095" />
               ) : (
-                <FontAwesome5 name="play" size={24} color="black" />
+                <FontAwesome5 name="play" size={18} color="#00000095" />
               )}
             </View>
-            <Text>{item.filename}</Text>
+            <Text style={{paddingHorizontal: 8}}>{item.filename}</Text>
           </TouchableOpacity>
         )}
         initialNumToRender={5} // Renderiza apenas os 5 primeiros itens inicialmente
@@ -172,10 +182,17 @@ const App: React.FC = () => {
       </View>
       
       <View style={styles.controls}>
-        <Button title="Anterior" onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0} />
-        <Button title={isPlaying ? "Pausar" : "Play"} onPress={togglePlayPause} disabled={currentIndex === null} />
-        <Button title="Próximo" onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1} />
-        <Button title="Parar" onPress={stopSound} disabled={currentIndex === null} />
+        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
+          <AntDesign name="stepbackward" size={30} color="#00000095" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={togglePlayStop} disabled={currentIndex === null}>
+          {isPlaying ? <FontAwesome5 name="stop" size={24} color="#00000095" /> : <FontAwesome5 name="play" size={24} color="#00000095" />}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
+          <AntDesign name="stepforward" size={30} color="#00000095" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -195,15 +212,16 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 8,
     borderBottomWidth: 1,
+    alignItems: 'center',
     flexDirection: 'row',
     borderColor: '#ccc',
     width: '100%',
   },
   boxMusic: {
-    minHeight: 50,
-    maxHeight: 50,
-    minWidth: 50,
-    maxWidth: 50,
+    minHeight: 40,
+    maxHeight: 40,
+    minWidth: 40,
+    maxWidth: 40,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -218,10 +236,18 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   controls: {
+    minHeight: 50,
+    maxHeight: 50,
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
   },
+  btns: {
+    minHeight: 50,
+    maxHeight: 50,
+    maxWidth: 50,
+    minWidth: 50,
+  }
 });
 
 export default App;
