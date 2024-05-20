@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 interface AudioFile {
   id: string;
@@ -11,6 +13,7 @@ interface AudioFile {
 }
 
 const App: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
@@ -57,7 +60,7 @@ const App: React.FC = () => {
       }
     };
   }, []);
-  
+
   const playSound = async (index: number) => {
     if (sound) {
       await sound.unloadAsync();
@@ -122,16 +125,25 @@ const App: React.FC = () => {
   }, [position]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Text style={styles.title}>Lista de Áudios</Text>
       <FlatList
         data={audioFiles}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={styles.item}
             onPress={() => playSound(index)}
           >
+            <View style={styles.boxMusic}>
+              {currentIndex === index && isPlaying ? (
+                <FontAwesome5 name="play" size={24} color="black" />
+              ) : (
+                <FontAwesome5 name="music" size={24} color="black" />
+              )}
+            </View>
             <Text>{item.filename}</Text>
           </TouchableOpacity>
         )}
@@ -167,17 +179,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
   },
   item: {
-    padding: 10,
+    paddingVertical: 8,
     borderBottomWidth: 1,
+    flexDirection: 'row',
     borderColor: '#ccc',
     width: '100%',
+  },
+  boxMusic: {
+    minHeight: 50,
+    maxHeight: 50,
+    minWidth: 50,
+    maxWidth: 50,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
   },
   progressContainer: {
     width: '100%',
