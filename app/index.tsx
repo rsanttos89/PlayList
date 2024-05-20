@@ -126,6 +126,7 @@ const App: React.FC = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+
       <Text style={styles.title}>Lista de Áudios</Text>
       <FlatList
         data={audioFiles}
@@ -177,6 +178,7 @@ const App: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
