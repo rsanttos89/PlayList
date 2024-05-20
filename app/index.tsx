@@ -136,6 +136,9 @@ const App: React.FC = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.boxIconMusic}>
+        <FontAwesome5 name="compact-disc" size={150} color="black" />
+      </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
       <FlatList
@@ -205,9 +208,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  boxIconMusic: {
+    minHeight: 200,
+    maxHeight: 200,
+    minWidth: 200,
+    maxWidth: 200,
+    borderRadius: 8,
+    marginVertical: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+  },
   title: {
     fontSize: 24,
-    marginBottom: 20,
   },
   item: {
     paddingVertical: 8,
