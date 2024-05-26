@@ -2,7 +2,7 @@
   "expo": {
     "name": "Playlist",
     "slug": "playlist",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "Playlist",

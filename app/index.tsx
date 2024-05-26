@@ -4,7 +4,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator }
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
-import { FontAwesome5, AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import { FontAwesome5, FontAwesome, AntDesign, SimpleLineIcons, Feather } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [position, setPosition] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRepeating, setIsRepeating] = useState<boolean>(false);
 
   const playSound = async (index: number) => {
     if (sound) {
@@ -39,6 +40,14 @@ const App: React.FC = () => {
         setIsPlaying(status.isPlaying);
         setDuration(status.durationMillis || 0);
         setPosition(status.positionMillis || 0);
+
+        if (status.didJustFinish && !status.isLooping) {
+          if (isRepeating) {
+            newSound.replayAsync();
+          } else {
+            playNext();
+          }
+        }
       }
     });
     setSound(newSound);
@@ -86,6 +95,10 @@ const App: React.FC = () => {
     if (currentIndex !== null && currentIndex > 0) {
       playSound(currentIndex - 1);
     }
+  };
+
+  const toggleRepeat = () => {
+    setIsRepeating(!isRepeating);
   };
 
   const onSliderValueChange = async (value: number) => {
@@ -139,7 +152,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (position === duration) {
+    if (position === duration && !isRepeating) {
       playNext();
     }
   }, [position]);
@@ -212,6 +225,28 @@ const App: React.FC = () => {
         />
       )}
 
+      <View style={styles.controls}>
+        <TouchableOpacity style={styles.btns} onPress={toggleRepeat}>
+          <Feather name="repeat" size={24} color={isRepeating ? "#00ffbf" : "#fff"} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
+          <AntDesign name="stepbackward" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.btns, { backgroundColor: '#ffffff50' }]} onPress={togglePlayPauseController} disabled={audioFiles.length === 0}>
+          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
+          <AntDesign name="stepforward" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={stopSound}>
+          <FontAwesome name="stop" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.progressContainer}>
         <Text style={{ color: '#ffffff' }}>{currentIndex !== null && isPlaying ? audioFiles[currentIndex].filename : "..."}</Text>
 
@@ -232,20 +267,6 @@ const App: React.FC = () => {
         }}>
           <Text style={{ color: '#ffffff' }}>{formatTime(position)} / {formatTime(duration)}</Text>
         </View>
-      </View>
-
-      <View style={styles.controls}>
-        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
-          <AntDesign name="stepbackward" size={24} color="#fff" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.btns, { backgroundColor: '#ffffff50' }]} onPress={togglePlayPauseController} disabled={audioFiles.length === 0}>
-          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
-          <AntDesign name="stepforward" size={24} color="#fff" />
-        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -298,7 +319,7 @@ const styles = StyleSheet.create({
   progressContainer: {
     width: '100%',
     alignItems: 'center',
-    marginVertical: 20,
+    marginBottom: 25
   },
   slider: {
     width: '100%',
