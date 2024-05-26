@@ -162,50 +162,36 @@ const App: React.FC = () => {
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
-        <FlatList
-          data={audioFiles}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
-              onPress={() => {
-                if (currentIndex === index && isPlaying) {
-                  togglePlayPause();
-                } else {
-                  playSound(index);
-                }
-              }}
-            >
-              <View style={styles.boxMusic}>
-                {currentIndex === index && isPlaying ? (
-                  <FontAwesome5 name="pause" size={18} color="#fff" />
-                ) : (
-                  <FontAwesome5 name="play" size={18} color="#fff" />
-                )}
-              </View>
-              <Text style={{ paddingHorizontal: 8, color: '#fff' }}>{item.filename}</Text>
-            </TouchableOpacity>
-          )}
-          initialNumToRender={5}
-          getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
-        />
+      <FlatList
+        data={audioFiles}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
+            onPress={() => {
+              if (currentIndex === index && isPlaying) {
+                togglePlayPause();
+              } else {
+                playSound(index);
+              }
+            }}
+          >
+            <View style={styles.boxMusic}>
+              {currentIndex === index && isPlaying ? (
+                <FontAwesome5 name="pause" size={18} color="#fff" />
+              ) : (
+                <FontAwesome5 name="play" size={18} color="#fff" />
+              )}
+            </View>
+            <Text style={{ paddingHorizontal: 8, color: '#fff' }}>{item.filename}</Text>
+          </TouchableOpacity>
+        )}
+        initialNumToRender={5}
+        getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
+      />
       
-      <View style={styles.controls}>
-        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
-          <AntDesign name="stepbackward" size={24} color="#fff" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.btns, {backgroundColor: '#ffffff50'}]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
-          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
-          <AntDesign name="stepforward" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.progressContainer}>
         <Text style={{color: '#ffffff'}}>{currentIndex !== null && isPlaying ? audioFiles[currentIndex].filename : "..."}</Text>
 
@@ -229,6 +215,20 @@ const App: React.FC = () => {
           {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(position / 1000)} sec`}</Text> */}
           {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(duration / 1000)} sec`}</Text> */}
         </View>
+      </View>
+
+      <View style={styles.controls}>
+        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
+          <AntDesign name="stepbackward" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.btns, {backgroundColor: '#ffffff50'}]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
+          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
+          <AntDesign name="stepforward" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -278,11 +278,11 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   slider: {
-    width: '90%',
+    width: '100%',
   },
   controls: {
-    minHeight: 100,
-    maxHeight: 100,
+    minHeight: 75,
+    maxHeight: 75,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
