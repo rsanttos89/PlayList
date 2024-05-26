@@ -78,19 +78,11 @@ const App: React.FC = () => {
   };
 
   const togglePlayPause = async () => {
-    if (sound) {
+    if (currentIndex === null && audioFiles.length > 0) {
+      playSound(0);
+    } else if (sound) {
       if (isPlaying) {
         await sound.pauseAsync();
-      } else {
-        await sound.playAsync();
-      }
-    }
-  };
-
-  const togglePlayStop = async () => {
-    if (sound) {
-      if (isPlaying) {
-        await sound.stopAsync();
       } else {
         await sound.playAsync();
       }
@@ -185,8 +177,8 @@ const App: React.FC = () => {
           <AntDesign name="stepbackward" size={30} color="#00000095" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btns} onPress={togglePlayStop} disabled={currentIndex === null}>
-          {isPlaying ? <FontAwesome5 name="stop" size={24} color="#00000095" /> : <FontAwesome5 name="play" size={24} color="#00000095" />}
+        <TouchableOpacity style={styles.btns} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
+          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#00000095" /> : <FontAwesome5 name="play" size={24} color="#00000095" />}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
