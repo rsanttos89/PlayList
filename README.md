@@ -24,7 +24,7 @@ npm install -g expo-cli
 3. Clone este repositório:
 
 ```bash
-git clone https://github.com/seuusuario/playlist-app.git
+git clone https://github.com/rsanttos89/PlayList
 ```
 
 4. Navegue até o diretório do projeto:
@@ -67,5 +67,3 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue para r
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
 ```
-
-Sinta-se à vontade para personalizar o README conforme necessário e adicionar ou remover seções de acordo com as necessidades do seu projeto.
