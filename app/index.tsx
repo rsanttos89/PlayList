@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Platform } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -24,36 +24,32 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadAudioFiles = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-  
       if (status === 'granted') {
         const audioAssets = await MediaLibrary.getAssetsAsync({
           mediaType: MediaLibrary.MediaType.audio,
         });
-  
-        // Filtrar apenas arquivos .mp3
+
         const mp3AudioFiles = audioAssets.assets.filter((asset: any) => {
           return asset.filename.endsWith('.mp3');
         });
-  
-        // Ordenar os arquivos de áudio em ordem alfabética pelo nome do arquivo
+
         mp3AudioFiles.sort((a, b) => a.filename.localeCompare(b.filename));
-  
+
         setAudioFiles(mp3AudioFiles as AudioFile[]);
       } else {
         alert('Permission to access media library is required!');
       }
     };
-  
+
     loadAudioFiles();
-  
-    // Configurações para áudio em segundo plano
+
     Audio.setAudioModeAsync({
       staysActiveInBackground: true,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
       allowsRecordingIOS: false,
     });
-  
+
     return () => {
       if (sound) {
         sound.unloadAsync();
@@ -151,9 +147,9 @@ const App: React.FC = () => {
             style={styles.item}
             onPress={() => {
               if (currentIndex === index && isPlaying) {
-                togglePlayPause(); // Pausar o áudio se estiver tocando e o usuário pressionar o item atual
+                togglePlayPause();
               } else {
-                playSound(index); // Caso contrário, reproduzir o áudio do item pressionado
+                playSound(index);
               }
             }}
           >
@@ -167,9 +163,9 @@ const App: React.FC = () => {
             <Text style={{paddingHorizontal: 8}}>{item.filename}</Text>
           </TouchableOpacity>
         )}
-        initialNumToRender={5} // Renderiza apenas os 5 primeiros itens inicialmente
+        initialNumToRender={5}
         getItemLayout={(data, index) => (
-          { length: 50, offset: 50 * index, index } // Tamanho estimado de cada item
+          { length: 50, offset: 50 * index, index }
         )}
       />
 
