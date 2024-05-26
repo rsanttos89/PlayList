@@ -1,16 +1,20 @@
 {
   "expo": {
-    "name": "playlist",
-    "slug": "playlist",
+    "name": "Playlist",
+    "slug": "Playlist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "Playlist",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000",
+      "color": "#fff",
+      "StatusBar": {
+        "style": "light"
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "package": "com.rsanttos.playlist"
     },
