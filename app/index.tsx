@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [position, setPosition] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const playSound = async (index: number) => {
     if (sound) {
@@ -91,6 +92,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const loadAudioFiles = async () => {
+      setIsLoading(true);
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status === 'granted') {
         const audioAssets = await MediaLibrary.getAssetsAsync({
@@ -107,6 +109,7 @@ const App: React.FC = () => {
       } else {
         alert('Permission to access media library is required!');
       }
+      setIsLoading(false);
     };
 
     loadAudioFiles();
@@ -124,7 +127,7 @@ const App: React.FC = () => {
       }
     };
   }, []);
-  
+
   useEffect(() => {
     if (position === duration) {
       playNext();
@@ -155,45 +158,52 @@ const App: React.FC = () => {
             />
           </View>
         ) : (
-          <View style={[styles.boxIconMusic, {borderWidth: 1, borderColor: '#fff', width: 150, height: 150}]}>
+          <View style={[styles.boxIconMusic, { borderWidth: 1, borderColor: '#fff', width: 150, height: 150 }]}>
             <SimpleLineIcons name="playlist" size={50} color="#fff" />
           </View>
         )}
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
-      <FlatList
-        data={audioFiles}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
-            onPress={() => {
-              if (currentIndex === index && isPlaying) {
-                togglePlayPause();
-              } else {
-                playSound(index);
-              }
-            }}
-          >
-            <View style={styles.boxMusic}>
-              {currentIndex === index && isPlaying ? (
-                <FontAwesome5 name="pause" size={18} color="#fff" />
-              ) : (
-                <FontAwesome5 name="play" size={18} color="#fff" />
-              )}
-            </View>
-            <Text style={{ paddingHorizontal: 8, color: '#fff' }}>{item.filename}</Text>
-          </TouchableOpacity>
-        )}
-        initialNumToRender={5}
-        getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
-      />
       
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#fff" />
+      ) : audioFiles.length === 0 ? (
+        <Text style={styles.emptyListText}>Lista Vazia</Text>
+      ) : (
+        <FlatList
+          data={audioFiles}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
+              onPress={() => {
+                if (currentIndex === index && isPlaying) {
+                  togglePlayPause();
+                } else {
+                  playSound(index);
+                }
+              }}
+            >
+              <View style={styles.boxMusic}>
+                {currentIndex === index && isPlaying ? (
+                  <FontAwesome5 name="pause" size={18} color="#fff" />
+                ) : (
+                  <FontAwesome5 name="play" size={18} color="#fff" />
+                )}
+              </View>
+              <Text style={{ paddingHorizontal: 8, color: '#fff' }}>{item.filename}</Text>
+            </TouchableOpacity>
+          )}
+          initialNumToRender={5}
+          getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
+        />
+      )}
+
       <View style={styles.progressContainer}>
-        <Text style={{color: '#ffffff'}}>{currentIndex !== null && isPlaying ? audioFiles[currentIndex].filename : "..."}</Text>
+        <Text style={{ color: '#ffffff' }}>{currentIndex !== null && isPlaying ? audioFiles[currentIndex].filename : "..."}</Text>
 
         <Slider
           value={position}
@@ -211,9 +221,6 @@ const App: React.FC = () => {
           alignItems: 'center',
         }}>
           <Text style={{ color: '#ffffff' }}>{formatTime(position)} / {formatTime(duration)}</Text>
-          {/* <Text style={{ color: '#ffffff' }}>{formatTime(duration)}</Text> */}
-          {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(position / 1000)} sec`}</Text> */}
-          {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(duration / 1000)} sec`}</Text> */}
         </View>
       </View>
 
@@ -222,7 +229,7 @@ const App: React.FC = () => {
           <AntDesign name="stepbackward" size={24} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.btns, {backgroundColor: '#ffffff50'}]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
+        <TouchableOpacity style={[styles.btns, { backgroundColor: '#ffffff50' }]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
           {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
         </TouchableOpacity>
 
@@ -252,6 +259,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: '#fff',
+  },
+  emptyListText: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 20,
   },
   item: {
     paddingVertical: 8,
@@ -295,7 +308,7 @@ const styles = StyleSheet.create({
     minWidth: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 60/2
+    borderRadius: 60 / 2
   }
 });
 
