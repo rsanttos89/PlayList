@@ -46,6 +46,16 @@ const App: React.FC = () => {
   };
 
   const togglePlayPause = async () => {
+    if (sound) {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        await sound.playAsync();
+      }
+    }
+  };
+
+  const togglePlayPauseController = async () => {
     if (currentIndex === null && audioFiles.length > 0) {
       playSound(0);
     } else if (sound) {
@@ -165,7 +175,7 @@ const App: React.FC = () => {
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
-      
+
       {isLoading ? (
         <ActivityIndicator size="large" color="#fff" />
       ) : audioFiles.length === 0 ? (
@@ -180,7 +190,7 @@ const App: React.FC = () => {
             <TouchableOpacity
               style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
               onPress={() => {
-                if (currentIndex === index && isPlaying) {
+                if (currentIndex === index) {
                   togglePlayPause();
                 } else {
                   playSound(index);
@@ -229,7 +239,7 @@ const App: React.FC = () => {
           <AntDesign name="stepbackward" size={24} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.btns, { backgroundColor: '#ffffff50' }]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
+        <TouchableOpacity style={[styles.btns, { backgroundColor: '#ffffff50' }]} onPress={togglePlayPauseController} disabled={audioFiles.length === 0}>
           {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
         </TouchableOpacity>
 
