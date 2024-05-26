@@ -194,6 +194,8 @@ const App: React.FC = () => {
           minimumValue={0}
           maximumValue={duration}
           onSlidingComplete={onSliderValueChange}
+          minimumTrackTintColor="#00ffbf"
+          maximumTrackTintColor="#ffffff"
           style={styles.slider}
         />
         <Text>{`${Math.floor(position / 1000)} / ${Math.floor(duration / 1000)} sec`}</Text>
