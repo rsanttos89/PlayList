@@ -162,37 +162,35 @@ const App: React.FC = () => {
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
-      <FlatList
-        data={audioFiles}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => {
-              if (currentIndex === index && isPlaying) {
-                togglePlayPause();
-              } else {
-                playSound(index);
-              }
-            }}
-          >
-            <View style={styles.boxMusic}>
-              {currentIndex === index && isPlaying ? (
-                <FontAwesome5 name="pause" size={18} color="#fff" />
-              ) : (
-                <FontAwesome5 name="play" size={18} color="#fff" />
-              )}
-            </View>
-            <Text style={{paddingHorizontal: 8, color: '#fff'}}>{item.filename}</Text>
-          </TouchableOpacity>
-        )}
-        initialNumToRender={5}
-        getItemLayout={(data, index) => (
-          { length: 50, offset: 50 * index, index }
-        )}
-      />
+        <FlatList
+          data={audioFiles}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              style={[styles.item, { opacity: currentIndex === index && isPlaying ? 0.5 : 1 }]}
+              onPress={() => {
+                if (currentIndex === index && isPlaying) {
+                  togglePlayPause();
+                } else {
+                  playSound(index);
+                }
+              }}
+            >
+              <View style={styles.boxMusic}>
+                {currentIndex === index && isPlaying ? (
+                  <FontAwesome5 name="pause" size={18} color="#fff" />
+                ) : (
+                  <FontAwesome5 name="play" size={18} color="#fff" />
+                )}
+              </View>
+              <Text style={{ paddingHorizontal: 8, color: '#fff' }}>{item.filename}</Text>
+            </TouchableOpacity>
+          )}
+          initialNumToRender={5}
+          getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
+        />
       
       <View style={styles.controls}>
         <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
@@ -209,7 +207,7 @@ const App: React.FC = () => {
       </View>
 
       <View style={styles.progressContainer}>
-        <Text style={{color: '#fff', textTransform: 'capitalize'}}>Nome da musica que esta tocando</Text>
+        <Text style={{color: '#ffffff'}}>{currentIndex !== null && isPlaying ? audioFiles[currentIndex].filename : "..."}</Text>
 
         <Slider
           value={position}
