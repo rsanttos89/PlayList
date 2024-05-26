@@ -24,42 +24,6 @@ const App: React.FC = () => {
   const [position, setPosition] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
 
-  useEffect(() => {
-    const loadAudioFiles = async () => {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status === 'granted') {
-        const audioAssets = await MediaLibrary.getAssetsAsync({
-          mediaType: MediaLibrary.MediaType.audio,
-        });
-
-        const mp3AudioFiles = audioAssets.assets.filter((asset: any) => {
-          return asset.filename.endsWith('.mp3');
-        });
-
-        mp3AudioFiles.sort((a, b) => a.filename.localeCompare(b.filename));
-
-        setAudioFiles(mp3AudioFiles as AudioFile[]);
-      } else {
-        alert('Permission to access media library is required!');
-      }
-    };
-
-    loadAudioFiles();
-
-    Audio.setAudioModeAsync({
-      staysActiveInBackground: true,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
-      allowsRecordingIOS: false,
-    });
-
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
-
   const playSound = async (index: number) => {
     if (sound) {
       await sound.unloadAsync();
@@ -119,6 +83,48 @@ const App: React.FC = () => {
     }
   };
 
+  const formatTime = (milliseconds: number): string => {
+    const minutes = Math.floor(milliseconds / 60000);
+    const seconds = ((milliseconds % 60000) / 1000).toFixed(0);
+    return `${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`;
+  };
+
+  useEffect(() => {
+    const loadAudioFiles = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status === 'granted') {
+        const audioAssets = await MediaLibrary.getAssetsAsync({
+          mediaType: MediaLibrary.MediaType.audio,
+        });
+
+        const mp3AudioFiles = audioAssets.assets.filter((asset: any) => {
+          return asset.filename.endsWith('.mp3');
+        });
+
+        mp3AudioFiles.sort((a, b) => a.filename.localeCompare(b.filename));
+
+        setAudioFiles(mp3AudioFiles as AudioFile[]);
+      } else {
+        alert('Permission to access media library is required!');
+      }
+    };
+
+    loadAudioFiles();
+
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+      allowsRecordingIOS: false,
+    });
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
+  
   useEffect(() => {
     if (position === duration) {
       playNext();
@@ -187,8 +193,24 @@ const App: React.FC = () => {
           { length: 50, offset: 50 * index, index }
         )}
       />
+      
+      <View style={styles.controls}>
+        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
+          <AntDesign name="stepbackward" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.btns, {backgroundColor: '#ffffff50'}]} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
+          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
+          <AntDesign name="stepforward" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.progressContainer}>
+        <Text style={{color: '#fff', textTransform: 'capitalize'}}>Nome da musica que esta tocando</Text>
+
         <Slider
           value={position}
           minimumValue={0}
@@ -198,21 +220,17 @@ const App: React.FC = () => {
           maximumTrackTintColor="#ffffff"
           style={styles.slider}
         />
-        <Text>{`${Math.floor(position / 1000)} / ${Math.floor(duration / 1000)} sec`}</Text>
-      </View>
-      
-      <View style={styles.controls}>
-        <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
-          <AntDesign name="stepbackward" size={24} color="#fff" />
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btns} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
-          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
-          <AntDesign name="stepforward" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={{
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <Text style={{ color: '#ffffff' }}>{formatTime(position)} / {formatTime(duration)}</Text>
+          {/* <Text style={{ color: '#ffffff' }}>{formatTime(duration)}</Text> */}
+          {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(position / 1000)} sec`}</Text> */}
+          {/* <Text style={{ color: '#ffffff' }}>{`${Math.floor(duration / 1000)} sec`}</Text> */}
+        </View>
       </View>
     </LinearGradient>
   );
@@ -273,14 +291,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   btns: {
-    minHeight: 50,
-    maxHeight: 50,
-    maxWidth: 50,
-    minWidth: 50,
+    minHeight: 60,
+    maxHeight: 60,
+    maxWidth: 60,
+    minWidth: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff50',
-    borderRadius: 50/2
+    borderRadius: 60/2
   }
 });
 
