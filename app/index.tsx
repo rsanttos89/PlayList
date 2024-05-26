@@ -6,6 +6,7 @@ import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { FontAwesome5, AntDesign } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface AudioFile {
   id: string;
@@ -125,7 +126,12 @@ const App: React.FC = () => {
   }, [position]);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <LinearGradient
+      colors={['#000', '#455086']}
+      style={[styles.container, { paddingTop: insets.top }]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
       <View style={styles.boxIconMusic}>
         <LottieView
           autoPlay
@@ -160,12 +166,12 @@ const App: React.FC = () => {
           >
             <View style={styles.boxMusic}>
               {currentIndex === index && isPlaying ? (
-                <FontAwesome5 name="pause" size={18} color="#00000095" />
+                <FontAwesome5 name="pause" size={18} color="#fff" />
               ) : (
-                <FontAwesome5 name="play" size={18} color="#00000095" />
+                <FontAwesome5 name="play" size={18} color="#fff" />
               )}
             </View>
-            <Text style={{paddingHorizontal: 8}}>{item.filename}</Text>
+            <Text style={{paddingHorizontal: 8, color: '#fff'}}>{item.filename}</Text>
           </TouchableOpacity>
         )}
         initialNumToRender={5}
@@ -198,7 +204,7 @@ const App: React.FC = () => {
           <AntDesign name="stepforward" size={30} color="#00000095" />
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -219,13 +225,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    color: '#fff',
   },
   item: {
     paddingVertical: 8,
     borderBottomWidth: 1,
     alignItems: 'center',
     flexDirection: 'row',
-    borderColor: '#ccc',
+    borderColor: '#fff',
     width: '100%',
   },
   boxMusic: {
@@ -234,6 +241,7 @@ const styles = StyleSheet.create({
     minWidth: 40,
     maxWidth: 40,
     borderWidth: 1,
+    borderColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 4,
