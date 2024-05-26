@@ -65,8 +65,6 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue para r
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
 
-Claro! Vamos adicionar uma seção que explica cada função do código:
-
 ```markdown
 ## Funções
 
