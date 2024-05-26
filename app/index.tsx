@@ -201,15 +201,15 @@ const App: React.FC = () => {
       
       <View style={styles.controls}>
         <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
-          <AntDesign name="stepbackward" size={30} color="#00000095" />
+          <AntDesign name="stepbackward" size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btns} onPress={togglePlayPause} disabled={audioFiles.length === 0}>
-          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#00000095" /> : <FontAwesome5 name="play" size={24} color="#00000095" />}
+          {isPlaying ? <FontAwesome5 name="pause" size={24} color="#fff" /> : <FontAwesome5 name="play" size={24} color="#fff" />}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btns} onPress={playNext} disabled={currentIndex === null || currentIndex === audioFiles.length - 1}>
-          <AntDesign name="stepforward" size={30} color="#00000095" />
+          <AntDesign name="stepforward" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -263,10 +263,11 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   controls: {
-    minHeight: 50,
-    maxHeight: 50,
+    minHeight: 100,
+    maxHeight: 100,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems: 'center',
     width: '100%',
   },
   btns: {
@@ -274,6 +275,10 @@ const styles = StyleSheet.create({
     maxHeight: 50,
     maxWidth: 50,
     minWidth: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff50',
+    borderRadius: 50/2
   }
 });
 
