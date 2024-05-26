@@ -40,20 +40,12 @@ const App: React.FC = () => {
         setIsPlaying(status.isPlaying);
         setDuration(status.durationMillis || 0);
         setPosition(status.positionMillis || 0);
-
-        if (status.didJustFinish && !status.isLooping) {
-          if (isRepeating) {
-            newSound.replayAsync();
-          } else {
-            playNext();
-          }
-        }
       }
     });
     setSound(newSound);
     setCurrentIndex(index);
   };
-
+  
   const togglePlayPause = async () => {
     if (sound) {
       if (isPlaying) {
@@ -95,10 +87,6 @@ const App: React.FC = () => {
     if (currentIndex !== null && currentIndex > 0) {
       playSound(currentIndex - 1);
     }
-  };
-
-  const toggleRepeat = () => {
-    setIsRepeating(!isRepeating);
   };
 
   const onSliderValueChange = async (value: number) => {
@@ -152,7 +140,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (position === duration && !isRepeating) {
+    if (position === duration) {
       playNext();
     }
   }, [position]);
@@ -226,10 +214,6 @@ const App: React.FC = () => {
       )}
 
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.btns} onPress={toggleRepeat}>
-          <Feather name="repeat" size={24} color={isRepeating ? "#00ffbf" : "#fff"} />
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.btns} onPress={playPrevious} disabled={currentIndex === null || currentIndex === 0}>
           <AntDesign name="stepbackward" size={24} color="#fff" />
         </TouchableOpacity>
