@@ -4,7 +4,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
-import { FontAwesome5, AntDesign } from '@expo/vector-icons';
+import { FontAwesome5, AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -133,18 +133,26 @@ const App: React.FC = () => {
       end={{ x: 1, y: 1 }}
     >
       <View style={styles.boxIconMusic}>
-        <LottieView
-          autoPlay
-          ref={animation}
-          style={{
-            width:260,
-            height:260,
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-          }}
-          source={require('../assets/animation/music.json')}
-        />
+        {isPlaying ? (
+          <View style={styles.boxIconMusic}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={{
+                width: 260,
+                height: 260,
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+              }}
+              source={require('../assets/animation/music.json')}
+            />
+          </View>
+        ) : (
+          <View style={[styles.boxIconMusic, {borderWidth: 1, borderColor: '#fff', width: 150, height: 150}]}>
+            <SimpleLineIcons name="playlist" size={50} color="#fff" />
+          </View>
+        )}
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
@@ -216,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   boxIconMusic: {
-    minHeight: 200,
+    height: 200,
     maxHeight: 200,
     borderRadius: 8,
     marginVertical: 32,
