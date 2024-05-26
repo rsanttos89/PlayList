@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { FontAwesome5, AntDesign } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
 
 interface AudioFile {
   id: string;
@@ -13,6 +14,7 @@ interface AudioFile {
 }
 
 const App: React.FC = () => {
+  const animation = useRef(null);
   const insets = useSafeAreaInsets();
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -125,7 +127,18 @@ const App: React.FC = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.boxIconMusic}>
-        <FontAwesome5 name="compact-disc" size={150} color="black" />
+        <LottieView
+          autoPlay
+          ref={animation}
+          style={{
+            width:260,
+            height:260,
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+          }}
+          source={require('../assets/animation/music.json')}
+        />
       </View>
 
       <Text style={styles.title}>Lista de Áudios</Text>
@@ -199,13 +212,10 @@ const styles = StyleSheet.create({
   boxIconMusic: {
     minHeight: 200,
     maxHeight: 200,
-    minWidth: 200,
-    maxWidth: 200,
     borderRadius: 8,
     marginVertical: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
   },
   title: {
     fontSize: 24,
