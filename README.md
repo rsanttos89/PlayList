@@ -64,3 +64,119 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue para r
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
+
+Claro! Vamos adicionar uma seção que explica cada função do código:
+
+```markdown
+## Funções
+
+### playSound
+
+```typescript
+const playSound = async (index: number) => {
+  if (sound) {
+    await sound.unloadAsync();
+  }
+
+  const { sound: newSound } = await Audio.Sound.createAsync(
+    { uri: audioFiles[index].uri },
+    { shouldPlay: true }
+  );
+  newSound.setOnPlaybackStatusUpdate((status) => {
+    if (status.isLoaded) {
+      setIsPlaying(status.isPlaying);
+      setDuration(status.durationMillis || 0);
+      setPosition(status.positionMillis || 0);
+    }
+  });
+  setSound(newSound);
+  setCurrentIndex(index);
+};
+```
+
+A função `playSound` é responsável por carregar e reproduzir o arquivo de áudio no índice especificado. Se houver um som atualmente em reprodução, ele é descarregado antes de carregar o novo som. Ele usa o `expo-av` para carregar o som e definir os status de reprodução.
+
+### togglePlayPause
+
+```typescript
+const togglePlayPause = async () => {
+  if (currentIndex === null && audioFiles.length > 0) {
+    playSound(0);
+  } else if (sound) {
+    if (isPlaying) {
+      await sound.pauseAsync();
+    } else {
+      await sound.playAsync();
+    }
+  }
+};
+```
+
+A função `togglePlayPause` alterna entre reprodução e pausa do áudio. Se não houver áudio tocando atualmente e houver arquivos de áudio disponíveis, ela começa a reproduzir o primeiro áudio. Se houver áudio tocando, ele pausa ou retoma a reprodução com base no estado atual.
+
+### stopSound
+
+```typescript
+const stopSound = async () => {
+  if (sound) {
+    await sound.stopAsync();
+    setIsPlaying(false);
+    setCurrentIndex(null);
+    setPosition(0);
+  }
+};
+```
+
+A função `stopSound` para a reprodução do áudio atual e redefine o estado para o início.
+
+### playNext
+
+```typescript
+const playNext = () => {
+  if (currentIndex !== null && currentIndex < audioFiles.length - 1) {
+    playSound(currentIndex + 1);
+  }
+};
+```
+
+A função `playNext` inicia a reprodução do próximo áudio na lista, se houver.
+
+### playPrevious
+
+```typescript
+const playPrevious = () => {
+  if (currentIndex !== null && currentIndex > 0) {
+    playSound(currentIndex - 1);
+  }
+};
+```
+
+A função `playPrevious` inicia a reprodução do áudio anterior na lista, se houver.
+
+### onSliderValueChange
+
+```typescript
+const onSliderValueChange = async (value: number) => {
+  if (sound) {
+    await sound.setPositionAsync(value);
+  }
+};
+```
+
+A função `onSliderValueChange` é chamada quando o usuário interage com o controle deslizante de progresso do áudio. Ela atualiza a posição de reprodução do áudio para o valor especificado.
+
+### formatTime
+
+```typescript
+const formatTime = (milliseconds: number): string => {
+  const minutes = Math.floor(milliseconds / 60000);
+  const seconds = ((milliseconds % 60000) / 1000).toFixed(0);
+  return `${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`;
+};
+```
+
+A função `formatTime` converte milissegundos em uma string no formato de tempo "minutos:segundos".
+
+### useEffects
+
+Os `useEffects` são ganchos de efeito do React que são usados para carregar os arquivos de áudio do dispositivo, configurar o modo de áudio e limpar o som quando o componente é desmontado.
