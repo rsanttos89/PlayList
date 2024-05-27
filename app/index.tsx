@@ -152,30 +152,26 @@ const App: React.FC = () => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <View style={styles.boxIconMusic}>
-        {isPlaying ? (
-          <View style={styles.boxIconMusic}>
-            <LottieView
-              autoPlay
-              ref={animation}
-              style={{
-                width: 260,
-                height: 260,
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10,
-              }}
-              source={require('../assets/animation/music.json')}
-            />
-          </View>
-        ) : (
-          <View style={[styles.boxIconMusic, { borderWidth: 1, borderColor: '#fff', width: 150, height: 150 }]}>
-            <SimpleLineIcons name="playlist" size={50} color="#fff" />
-          </View>
-        )}
-      </View>
-
-      <Text style={styles.title}>Lista de Áudios</Text>
+      {isPlaying ? (
+        <View style={styles.boxIconMusic}>
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 260,
+              height: 100,
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+            }}
+            source={require('../assets/animation/music.json')}
+          />
+        </View>
+      ) : (
+        <View style={[styles.boxIconMusic, { borderWidth: 1, borderColor: '#fff', width: 150, height: 150 }]}>
+          <SimpleLineIcons name="playlist" size={50} color="#fff" />
+        </View>
+      )}
 
       {isLoading ? (
         <ActivityIndicator size="large" color="#fff" />
@@ -226,9 +222,9 @@ const App: React.FC = () => {
           <AntDesign name="stepforward" size={24} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btns} onPress={stopSound}>
+        {/* <TouchableOpacity style={styles.btns} onPress={stopSound}>
           <FontAwesome name="stop" size={24} color="#fff" />
-        </TouchableOpacity>
+        </TouchableOpacity>  */}
       </View>
 
       <View style={styles.progressContainer}>
@@ -264,10 +260,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   boxIconMusic: {
-    height: 200,
-    maxHeight: 200,
+    height: 150,
+    maxHeight: 100,
     borderRadius: 8,
-    marginVertical: 32,
+    marginVertical: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -282,11 +278,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   item: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
+    paddingVertical: 12,
+    borderBottomWidth: 0.3,
     alignItems: 'center',
     flexDirection: 'row',
-    borderColor: '#fff',
+    borderColor: '#ffffff50',
     width: '100%',
   },
   boxMusic: {
@@ -311,6 +307,7 @@ const styles = StyleSheet.create({
   controls: {
     minHeight: 75,
     maxHeight: 75,
+    marginTop: 16,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
